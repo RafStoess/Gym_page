@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index</title>
+    <link rel="stylesheet" href="Login_Style.css">
+    <link rel="stylesheet" href="style_index.css">
+</head>
+<body>
+
+<!--*******************CUERPO EN GENERAL DEL INDEX*********************** -->
+    <section class="main">
+        <header>
+            <div class="center menu-container">
+                <div class="logo">
+                    <h3>SIN EXCUSAS GYM</h3>
+                </div> 
+                <div class="menu">
+                    <a class="active-menu" href="#">Inicio</a>
+                    <a href="nosotros.html">Nosotros</a>
+                    <a href="Servicios.html">Servicios</a>
+                    <a href="promociones.html">Promociones</a>
+                    <a href="#" id="login-btn">Login</a>
+                </div>
+            </div>
+        </header>
+        <div class="text-chamada">
+            <h1>Sin excusas...</h1>
+            <h2>Las excusas no queman calorías....</h2>
+        </div>
+    </section>
+<!--*************************HTML DEL LOGIN**************************** -->
+
+    <div id="login-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Iniciar Sesión</h2>
+            <input type="text" placeholder="Usuario" id="username">
+            <input type="password" placeholder="Contraseña" id="password">
+            <button onclick="validarLogin()">Ingresar</button>
+            <p id="mensaje"></p>
+        </div>
+    </div>
+<!--**********Importante para llamar las clases css de difuminado y esconder de fondo del login********* -->
+    <div id="overlay" class="overlay hidden"></div>
+
+<!--*********** Archivos JS****************** -->
+<script src="Login_Script.js"></script>
+</body>
+</html>

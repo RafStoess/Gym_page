@@ -1,0 +1,297 @@
+/*************************ESTILO DEL INDEX - MENU EN GENERAL**********************/
+/*tipos de*/
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+/*para centrear el nombre del gym*/
+.center {
+    max-width: 1100px;
+    padding: 0 2%;
+    display: flex;
+    margin:0 auto ;
+   
+}
+/*color de la franja degradada del menu*/
+header {
+    background-color: rgba(0, 0, 0, 0.15);
+    height: 45px;
+}
+/*color de letra del nombre del gym*/
+.logo {
+    color: #ec4141;
+    margin-top: 10px;
+}
+/*Eñ color de letra del nombre del gym cuando se acerca el cursor*/
+.logo :hover {
+    color: #ffffff;
+   
+}
+/*para poner a un costado todo el menu*/
+.menu-container {
+    width: 100%;
+    justify-content: space-between;
+
+}
+/*Color del cuadaro de inicio*/
+.menu-container a.active-menu {
+    background-color: #fd0404;
+}
+/*Color de las letras del menu*/
+.menu-container a {
+    color:#fff;
+    display: inline-block;
+    margin: 0 10px;
+   padding:0 10px ;
+    text-decoration: none;
+    line-height: 40px;
+    transition: 0.9s;
+}
+/*Color de las letras del menu cuando se hacerca el cursor sobre ellas*/
+.menu-container a:hover {
+    color: rgb(255, 17, 0);
+}
+/***************************fondo de la imangen*********************************/
+/*aca van los background de las distintas paginas html*/
+.main {
+    position: relative;
+    min-height: 800px;
+    background-size: cover;
+    background-image: url('img/fonfoof1.jpg');
+    background-position: center;
+}
+.main2 {
+    position: relative;
+    min-height: 800px;
+    background-size: cover;
+    background-image: url('img/fondo2.jpg');
+    background-position: center;
+}
+.main3 {
+    position: relative;
+    min-height: 800px;
+    background-size: cover;
+    background-image: url('img/fondo3.jpg');
+    background-position: center;
+}
+.main4 {
+    position: relative;
+    min-height: 800px;
+    background-size: cover;
+    background-image: url('img/fondo4.jpg');
+    background-position: center;
+}
+.main5 {
+  position: relative;
+  min-height: 800px;
+  background-size: cover;
+  background-image: url('img/Blanco.jpg');
+  background-position: center;
+}
+/* para el lema del gym*/
+.text-chamada {
+    color: #fff;
+    position: absolute;
+    bottom: 300px;
+    left: 10px;
+}
+
+.text-chamada h1 {
+    font-size: 35px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+
+}
+/********************************************ESTILO PAGINA NOSOTROS******************************/
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #0e0e0e;
+    color: #ffffff;
+}
+
+.nosotros-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 40px;
+    background: linear-gradient(to right, #1a1a1a, #330000);
+}
+
+.content {
+    max-width: 700px;
+    text-align: center;
+    background-color: rgba(255, 0, 0, 0.05);
+    padding: 30px;
+    border: 2px solid #ff0000;
+    border-radius: 15px;
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.6);
+}
+
+h1 {
+    font-size: 2.5rem;
+    color: #ff3333;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    margin-bottom: 15px;
+}
+
+.firma {
+    font-style: italic;
+    color: #ff6666;
+    margin-top: 30px;
+}
+
+  /*Para dividir en columnas las imagenes*/
+  .grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    max-width: 1200px;
+    margin: auto;
+  }
+  /*color de cada cuadro de imagen*/
+  .card {
+    background-color: #080808fd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0px 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+  }
+  /*Lo que le da el movimiento a cada imagen*/
+  .card:hover {
+    transform: translateY(-5px);
+  }
+  /*lo que dimensiona las imagenes*/
+  .card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+  }
+  /*Color de las letras de los titulos de las imagenes*/
+  .card h3 {
+    margin: 15px;
+    font-size: 18px;
+    color: #f40707;
+  }
+  /*color de las letras de los mensajes de las imagenes*/
+  .card p {
+    margin: 0 15px 15px;
+    color: #666;
+    font-size: 14px;
+  }
+  /*ESTILOS DE PRECIOS.HTML*/
+  body {
+  margin: 10;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f8f8f8;
+  /*Color letra*/
+  color: #b7b8b3;
+}
+
+.pricing-section {
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.pricing-section h2 {
+  font-size: 32px;
+  margin-bottom: 40px;
+}
+
+.pricing-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+}
+/*Color de las tarjetas*/
+.pricing-card {
+  background-color: #d90f0f0e;
+  border-radius: 10px;
+  width: 300px;
+  box-shadow: 0 0 10px rgba(194, 14, 14, 0.1);
+  padding: 30px 20px;
+  transition: transform 0.3s ease;
+}
+
+.pricing-card:hover {
+  transform: translateY(-5px);
+}
+
+.pricing-card h3 {
+  margin-bottom: 10px;
+  font-size: 22px;
+}
+
+.price {
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+/*.price span {
+  display: block;
+  font-size: 16px;
+  margin-top: 5px;
+}*/
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px;
+}
+
+ul li {
+  border-top: 1px solid #ddd;
+  padding: 10px 0;
+  font-size: 14px;
+}
+
+ul li:first-child {
+  border-top: none;
+}
+
+button {
+  border: 2px solid;
+  border-radius: 30px;
+  padding: 10px 20px;
+  font-weight: bold;
+  background-color: transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* Estilos por tarjeta */
+.gimnasio h3,
+.gimnasio .price,
+.gimnasio button {
+  color: #ff0400;
+  border-color: #ff0400;
+}
+
+.masaje h3,
+.masaje .price,
+.masaje button {
+  color: #ff0400;
+  border-color: #ff0400;
+}
+
+.nutriologo h3,
+.nutriologo .price,
+.nutriologo button {
+  color: #ff0400;
+  border-color: #ff0400;
+}
+
+button:hover {
+  background-color: currentColor;
+  color: rgba(244, 240, 240, 0.156);
+}

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Usuario</title>
+  <link rel="stylesheet" href="gerente.css">
+  <link rel="stylesheet" href="style_index.css">
+</head>
+<body>
+<style>
+  /* Estilo de la tabla asistencia */
+  .asistencia-table {
+    margin-top: 20px;
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .asistencia-table th, .asistencia-table td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: center;
+  }
+  .asistencia-table th {
+    background-color: #f2f2f2;
+  }
+  .asistio {
+    background-color: #c8e6c9;
+  }
+  .no-asistio {
+    background-color: #ffcdd2;
+  }
+</style>
+
+<section class="main5">
+  <header>
+    <div class="center menu-container">
+      <div class="logo">
+        <h3>Usuario</h3>
+      </div>
+      <div class="menu">
+        <a class="active-menu" href="index.html">Inicio</a>
+        <a href="#" onclick="mostrarSeccion('asistencia')">Verificar asistencia</a>
+        <a href="#" onclick="logout()">Cerrar sesión</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <center><h1>Panel Usuario</h1></center>
+
+    <!-- SECCIÓN ASISTENCIA -->
+    <div id="asistencia" class="seccion" style="display: none;">
+      <h2>Historial de Asistencia</h2>
+
+      <!-- Formulario solo visible para roles distintos a "Usuario" -->
+      <form id="formAsistencia">
+        <label for="usuarioAsistencia">Seleccionar Usuario:</label>
+        <select id="usuarioAsistencia" required></select>
+        <button type="submit">Registrar Asistencia</button>
+      </form>
+
+      <p id="mensajeAsistencia"></p>
+      <table id="tablaAsistencias" border="1" class="asistencia-table">
+        <thead>
+          <tr id="encabezadoTabla">
+            <th id="colUsuario">Usuario</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th id="colRol">Rol</th>
+            <th>Fechas de Asistencia</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Se llena dinámicamente -->
+        </tbody>
+      </table>
+    </div>
+  </main>
+</section>
+
+<script>
+  //************ Verificación del usuario actual **********************
+  const actual = JSON.parse(localStorage.getItem("usuarioActual"));
+  if (!actual || actual.rol !== "Usuario") {
+    window.location.href = "index.html";
+  }
+
+  //***************** FORMATEO DE FECHA *****************
+  function formatearFecha(fecha) {
+    const f = new Date(fecha);
+    const dia = f.getDate().toString().padStart(2, '0');
+    const mes = (f.getMonth() + 1).toString().padStart(2, '0');
+    const anio = f.getFullYear();
+    return `${dia}/${mes}/${anio}`;
+  }
+
+  //**************** MOSTRAR HISTORIAL SOLO PARA USUARIO *****************
+  function mostrarHistorialUsuarioActual() {
+    const tabla = document.querySelector("#tablaAsistencias tbody");
+    const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+    const usuario = usuarios.find(u => u.username === actual.username);
+    tabla.innerHTML = "";
+
+    if (usuario && usuario.asistencias && usuario.asistencias.length > 0) {
+      const fechasFormateadas = usuario.asistencias.map(f => formatearFecha(f));
+      const fila = `
+        <tr>
+          <td style="display:none;">${usuario.username}</td>
+          <td>${usuario.nombre}</td>
+          <td>${usuario.apellido}</td>
+          <td style="display:none;">${usuario.rol}</td>
+          <td>${fechasFormateadas.join("<br>")}</td>
+        </tr>`;
+      tabla.innerHTML += fila;
+    }
+  }
+
+  //**************** PARA ROLES ADMIN: CARGAR USUARIOS Y MOSTRAR HISTORIAL *****************
+  function cargarUsuariosAsistencia() {
+    const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+    const select = document.getElementById("usuarioAsistencia");
+    select.innerHTML = '<option value="">Seleccionar</option>';
+    usuarios.forEach(usuario => {
+      const option = document.createElement("option");
+      option.value = usuario.username;
+      option.textContent = `${usuario.nombre} ${usuario.apellido} (${usuario.rol})`;
+      select.appendChild(option);
+    });
+
+    select.addEventListener("change", mostrarHistorialAsistencia);
+  }
+
+  function mostrarHistorialAsistencia() {
+    const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+    const tabla = document.querySelector("#tablaAsistencias tbody");
+    const usernameSeleccionado = document.getElementById("usuarioAsistencia").value;
+    tabla.innerHTML = "";
+
+    const filtrados = usernameSeleccionado
+      ? usuarios.filter(u => u.username === usernameSeleccionado)
+      : usuarios;
+
+    filtrados.forEach(u => {
+      if (u.asistencias && u.asistencias.length > 0) {
+        const fechasFormateadas = u.asistencias.map(f => formatearFecha(f));
+        const fila = `
+          <tr>
+            <td>${u.username}</td>
+            <td>${u.nombre}</td>
+            <td>${u.apellido}</td>
+            <td>${u.rol}</td>
+            <td>${fechasFormateadas.join("<br>")}</td>
+          </tr>`;
+        tabla.innerHTML += fila;
+      }
+    });
+  }
+
+  //**************** REGISTRAR ASISTENCIA (SOLO PARA ADMIN) *****************
+  document.getElementById("formAsistencia").addEventListener("submit", function (e) {
+    e.preventDefault();
+    const username = document.getElementById("usuarioAsistencia").value;
+    if (!username) return;
+
+    const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+    const usuario = usuarios.find(u => u.username === username);
+    const hoy = new Date();
+
+    if (!usuario.asistencias) usuario.asistencias = [];
+    if (!usuario.asistencias.includes(hoy.toISOString())) {
+      usuario.asistencias.push(hoy.toISOString());
+      localStorage.setItem("usuarios", JSON.stringify(usuarios));
+      document.getElementById("mensajeAsistencia").textContent = "Asistencia registrada.";
+    } else {
+      document.getElementById("mensajeAsistencia").textContent = "La asistencia ya fue registrada hoy.";
+    }
+
+    mostrarHistorialAsistencia();
+  });
+
+  //**************** MOSTRAR SECCIÓN Y CONTROLAR VISIBILIDAD *****************
+  function mostrarSeccion(id) {
+    const secciones = document.querySelectorAll('.seccion');
+    secciones.forEach(sec => sec.style.display = 'none');
+    const seccionMostrada = document.getElementById(id);
+    if (seccionMostrada) {
+      seccionMostrada.style.display = 'block';
+    }
+
+    if (id === 'asistencia') {
+      if (actual.rol === "Usuario") {
+        // Ocultar formulario y columnas innecesarias
+        document.getElementById("formAsistencia").style.display = "none";
+        document.getElementById("colUsuario").style.display = "none";
+        document.getElementById("colRol").style.display = "none";
+        mostrarHistorialUsuarioActual();
+      } else {
+        cargarUsuariosAsistencia();
+        mostrarHistorialAsistencia();
+      }
+    }
+  }
+
+  //**************** CERRAR SESIÓN *****************
+  function logout() {
+    localStorage.removeItem("usuarioActual");
+    window.location.href = "index.html";
+  }
+</script>
+
+</body>
+</html>

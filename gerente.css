@@ -1,0 +1,60 @@
+/*************** Para darle forma al cuadro regtistrar usuario********************/
+
+/**/
+body { font-family: Arial, sans-serif; margin: 20px; }
+h1, h2 { color: #2c3e50; }
+form { margin-bottom: 20px; }
+input, select {
+  margin: 5px 0;
+  display: block;
+  padding: 8px;
+  width: 250px;
+}
+button { padding: 8px 12px; cursor: pointer; }
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.success { color: green; }
+.error { color: r#e60000; }
+/*Modificacion desde aca*/
+.main {
+position: relative;
+min-height: 800px;
+background-size: cover;
+background-image: url('img/Blanco.jpg');
+background-position: center;
+}
+.top-nav button {
+  background: #e60000;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+}
+
+/**/
+.modal .close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    cursor: pointer;
+    font-size: 20px;
+    color: #333;
+}
+
+/*Para mostrar el difuminado del login*/
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        backdrop-filter: blur(5px);
+        background-color: rgba(0, 0, 0, 0.4);
+        z-index: 1000;
+    }
+/* Ocultar elementos */
+    .hidden {
+        display: none;
+    }

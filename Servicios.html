@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style_index.css">
+    <link rel="stylesheet" href="Login_Style.css">
+    <title>SIN EXCUSAS</title>
+</head>
+<body>
+<!--*******************CUERPO EN GENERAL DEL INDEX*********************** -->
+    <!--menu-->
+    <section class="main3">
+        <header>
+            <div class="center menu-container">
+                <div class="logo">
+                    <h3>SIN EXCUSAS GYM</h3>
+                </div> 
+                <div class="menu">
+                    <a class="active-menu" href="index.html">Inicio</a>
+                    <a href="nosotros.html">Nosotros</a>
+                    <a href="Servicios.html">Servicios</a>
+                    <a href="promociones.html">Promociones</a>
+                    <a href="#" id="login-btn">Login</a>
+                </div>
+            </div>
+        </header>
+    <!--Imagenes-->
+        <section class="grid-container">
+            <div class="card">
+              <img src="img/1.jpg" alt="Instructores">
+              <h3>Instructores</h3>
+              <p>Contaras con instructores personalizados.</p>
+            </div>
+        
+            <div class="card">
+              <img src="img/2.jpg" alt="Cardio">
+              <h3>Cardio</h3>
+              <p>Disponemos de varias máquinas de cardio de última tecnología</p>
+            </div>
+        
+            <div class="card">
+              <img src="img/3.jpg" alt="Pesas">
+              <h3>Pesas</h3>
+              <p>Contamos con el stok más premiun del mercado en pesas y equipos de gimnasio.</p>
+            </div>
+        
+            <div class="card">
+              <img src="img/4.jpg" alt="Sauna">
+              <h3>Sauna</h3>
+              <p>Contamos con los mejores ambientes de sauna en seco y a vapor.</p>
+            </div>
+        
+            <div class="card">
+              <img src="img/5.jpg" alt="Regaderas">
+              <h3>Regaderas</h3>
+              <p>Disponemos de regaderas en todos nuestros ambientes.</p>
+            </div>
+        
+            <div class="card">
+              <img src="img/6.jpg" alt="Nutriólogo">
+              <h3>Nutriólogo</h3>
+              <p>nutriologo espeacializado con seguimiento para que cumplas tus metas.</p>
+            </div>
+        
+            <div class="card">
+              <img src="img/7.jpg" alt="Sala de espera">
+              <h3>Sala de espera</h3>
+              <p>Contamos con la mejor sala de espera para que te relajes mientras esperas tu turno.</p>
+            </div>
+        
+            <div class="card">
+              <img src="img/8.jpg" alt="Masajes">
+              <h3>Masajes</h3>
+              <p>Si solo deseas relajarte contamos con las mejores salas de masajes asiaticos :'v </p>
+            </div>
+          </section>
+    </section>
+<!--*************************HTML DEL LOGIN**************************** -->
+    <!-- Modal de Login -->
+    <div id="login-modal" class="modal hidden">
+      <div class="modal-content">
+          <span class="close">&times;</span>
+          <h2>Iniciar Sesión</h2>
+          <input type="text" placeholder="Usuario" id="username">
+          <input type="password" placeholder="Contraseña" id="password">
+          <button onclick="validarLogin()">Ingresar</button>
+          <p id="mensaje"></p>
+      </div>
+  </div>
+<!--**********Importante para llamar las clases css de difuminado y esconder de fondo del login********* -->
+    <div id="overlay" class="overlay hidden"></div>
+
+<!--*********** Archivos JS****************** -->
+<script src="Login_Script.js"></script>
+</body>
+</html>

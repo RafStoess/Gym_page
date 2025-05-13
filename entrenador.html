@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Entrenador</title>
+  <link rel="stylesheet" href="gerente.css">
+  <link rel="stylesheet" href="style_index.css">
+</head>
+<body>
+ <style>
+    /*Estilo de la tabla asistencia*/
+    .asistencia-table {
+      margin-top: 20px;
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .asistencia-table th, .asistencia-table td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+    .asistencia-table th {
+      background-color: #f2f2f2;
+    }
+    .asistio {
+      background-color: #c8e6c9;
+    }
+    .no-asistio {
+      background-color: #ffcdd2;
+    }
+  </style>
+<section class="main5">
+  <header>
+    <div class="center menu-container">
+      <div class="logo">
+        <h3>Entrenador</h3>
+      </div>
+      <div class="menu">
+        <a class="active-menu" href="index.html">Inicio</a>
+        <a href="#" onclick="mostrarSeccion('asistencia')">Registrar asistencia</a>
+        <a href="#" onclick="mostrarSeccion('herramientas')">Herramientas</a>
+        <a href="#" onclick="logout()">Cerrar sesión</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <center><h1>Panel Entrenador</h1></center>
+
+    <!-- SECCIÓN REGISTRAR ASISTENCIA -->
+    <div id="asistencia" class="seccion" style="display: none;">
+      <h2>Registrar Asistencia</h2>
+      <form id="formAsistencia">
+        <label for="usuarioAsistencia">Seleccionar Usuario:</label>
+        <select id="usuarioAsistencia" required></select>
+        <button type="submit">Registrar Asistencia</button>
+      </form>
+      <p id="mensajeAsistencia"></p>
+      <h3>Historial de Asistencias</h3>
+      <table id="tablaAsistencias" border="1" style="width:100%; text-align:center; border-collapse:collapse;">
+        <thead>
+          <tr>
+            <th>Usuario</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Rol</th>
+            <th>Fechas de Asistencia</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Se llena dinámicamente -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SECCIÓN HERRAMIENTAS DEL ENTRENADOR -->
+    <div id="herramientas" class="seccion" style="display: none;">
+      <h2>Herramientas para el Entrenador</h2>
+      
+      <!-- IMC -->
+      <h3>Calculadora de IMC</h3>
+      <label>Peso (kg): <input type="number" id="pesoIMC"></label>
+      <label>Altura (cm): <input type="number" id="alturaIMC"></label>
+      <button onclick="calcularIMC()">Calcular IMC</button>
+      <p id="resultadoIMC"></p>
+
+      <!-- Agua -->
+      <h3>Agua Recomendada por Día</h3>
+      <label>Peso (kg): <input type="number" id="pesoAgua"></label>
+      <button onclick="calcularAgua()">Calcular</button>
+      <p id="resultadoAgua"></p>
+
+      <!-- Metabolismo Basal y GED -->
+      <h3>Metabolismo Basal y Gasto Energético Diario</h3>
+      <label>Sexo:
+        <select id="sexoMB">
+          <option value="hombre">Hombre</option>
+          <option value="mujer">Mujer</option>
+        </select>
+      </label>
+      <label>Peso (kg): <input type="number" id="pesoMB"></label>
+      <label>Altura (cm): <input type="number" id="alturaMB"></label>
+      <label>Edad (años): <input type="number" id="edadMB"></label>
+      <label>Actividad:
+        <select id="actividad">
+          <option value="1.2">Sedentario</option>
+          <option value="1.375">Ligera (1-3 días/sem)</option>
+          <option value="1.55">Moderada (3-5 días/sem)</option>
+          <option value="1.725">Intensa (6-7 días/sem)</option>
+          <option value="1.9">Muy intensa (atleta)</option>
+        </select>
+      </label>
+      <button onclick="calcularMB()">Calcular</button>
+      <p id="resultadoMB"></p>
+    </div>
+  </main>
+</section>
+
+<script>
+  //************ Elegir roll de la pagina **********************
+  const actual = JSON.parse(localStorage.getItem("usuarioActual"));
+  if (!actual || actual.rol !== "Entrenador") {
+    window.location.href = "index.html";
+  }
+    function logout() {
+    localStorage.removeItem("usuarioActual");
+    window.location.href = "index.html";
+  }
+  //***************HERRAMIENTAS PARA EL ENTRENADOR ***************
+    // Mostrar sección
+  function mostrarSeccion(id) {
+    const secciones = document.querySelectorAll('.seccion');
+    secciones.forEach(sec => sec.style.display = 'none');
+    const seccionMostrada = document.getElementById(id);
+    if (seccionMostrada) seccionMostrada.style.display = 'block';
+    if (id === 'asistencia') {
+      cargarUsuariosAsistencia();
+      mostrarHistorialAsistencia();
+    }
+  }
+
+  // IMC
+  function calcularIMC() {
+    const peso = parseFloat(document.getElementById("pesoIMC").value);
+    const altura = parseFloat(document.getElementById("alturaIMC").value) / 100;
+    if (!peso || !altura) return;
+    const imc = peso / (altura * altura);
+    document.getElementById("resultadoIMC").textContent = `IMC: ${imc.toFixed(2)}`;
+  }
+
+  // Agua
+  function calcularAgua() {
+    const peso = parseFloat(document.getElementById("pesoAgua").value);
+    if (!peso) return;
+    const agua = peso * 35; // en ml
+    document.getElementById("resultadoAgua").textContent = `Debes beber aproximadamente ${agua.toFixed(0)} ml por día (${(agua / 1000).toFixed(2)} litros).`;
+  }
+
+  // Metabolismo Basal y GED
+  function calcularMB() {
+    const sexo = document.getElementById("sexoMB").value;
+    const peso = parseFloat(document.getElementById("pesoMB").value);
+    const altura = parseFloat(document.getElementById("alturaMB").value);
+    const edad = parseInt(document.getElementById("edadMB").value);
+    const factorActividad = parseFloat(document.getElementById("actividad").value);
+    if (!peso || !altura || !edad) return;
+
+    let mb;
+    if (sexo === "hombre") {
+      mb = 10 * peso + 6.25 * altura - 5 * edad + 5;
+    } else {
+      mb = 10 * peso + 6.25 * altura - 5 * edad - 161;
+    }
+
+    const ged = mb * factorActividad;
+    document.getElementById("resultadoMB").textContent =
+      `Metabolismo Basal: ${mb.toFixed(2)} kcal/día | Gasto Energético Diario: ${ged.toFixed(2)} kcal/día`;
+  }
+
+//**************** FUNCIONES PARA ASISTENCIA*********************
+
+// Formatear fecha a dd/mm/yyyy
+function formatearFecha(fecha) {
+  const f = new Date(fecha);
+  const dia = f.getDate().toString().padStart(2, '0');
+  const mes = (f.getMonth() + 1).toString().padStart(2, '0');
+  const anio = f.getFullYear();
+  return `${dia}/${mes}/${anio}`;
+}
+
+// Cargar usuarios en el <select>
+function cargarUsuariosAsistencia() {
+  const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+  const select = document.getElementById("usuarioAsistencia");
+  select.innerHTML = '<option value="">Seleccionar</option>';
+  usuarios.forEach(usuario => {
+    const option = document.createElement("option");
+    option.value = usuario.username;
+    option.textContent = `${usuario.nombre} ${usuario.apellido} (${usuario.rol})`;
+    select.appendChild(option);
+  });
+
+  // Mostrar historial cuando se selecciona un usuario
+  select.addEventListener("change", mostrarHistorialAsistencia);
+}
+
+// Mostrar historial de asistencia
+function mostrarHistorialAsistencia() {
+  const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+  const tabla = document.querySelector("#tablaAsistencias tbody");
+  const usernameSeleccionado = document.getElementById("usuarioAsistencia").value;
+  tabla.innerHTML = "";
+
+  const filtrados = usernameSeleccionado
+    ? usuarios.filter(u => u.username === usernameSeleccionado)
+    : usuarios;
+
+  filtrados.forEach(u => {
+    if (u.asistencias && u.asistencias.length > 0) {
+      const fechasFormateadas = u.asistencias.map(f => formatearFecha(f));
+      const fila = `
+        <tr>
+          <td>${u.username}</td>
+          <td>${u.nombre}</td>
+          <td>${u.apellido}</td>
+          <td>${u.rol}</td>
+          <td>${fechasFormateadas.join("<br>")}</td>
+        </tr>`;
+      tabla.innerHTML += fila;
+    }
+  });
+}
+
+// Registrar asistencia
+document.getElementById("formAsistencia").addEventListener("submit", function (e) {
+  e.preventDefault();
+  const username = document.getElementById("usuarioAsistencia").value;
+  if (!username) return;
+
+  const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+  const usuario = usuarios.find(u => u.username === username);
+  const hoy = new Date();
+  const fechaHoyFormateada = formatearFecha(hoy);
+
+  if (!usuario.asistencias) usuario.asistencias = [];
+  if (!usuario.asistencias.includes(hoy.toISOString())) {
+    usuario.asistencias.push(hoy.toISOString());
+    localStorage.setItem("usuarios", JSON.stringify(usuarios));
+    document.getElementById("mensajeAsistencia").textContent = "Asistencia registrada.";
+  } else {
+    document.getElementById("mensajeAsistencia").textContent = "La asistencia ya fue registrada hoy.";
+  }
+
+  mostrarHistorialAsistencia();
+});
+
+// Mostrar la sección y actualizar datos
+function mostrarSeccion(id) {
+  const secciones = document.querySelectorAll('.seccion');
+  secciones.forEach(sec => sec.style.display = 'none');
+  const seccionMostrada = document.getElementById(id);
+  if (seccionMostrada) {
+    seccionMostrada.style.display = 'block';
+  }
+  if (id === 'asistencia') {
+    cargarUsuariosAsistencia();
+    mostrarHistorialAsistencia();
+  }
+}
+</script>
+
+</body>
+</html>

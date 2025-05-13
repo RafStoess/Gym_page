@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Administrador</title>
+  <link rel="stylesheet" href="gerente.css">
+  <link rel="stylesheet" href="style_index.css">
+</head>
+<body>
+ <style>
+    /*Estilo de la tabla asistencia*/
+    .asistencia-table {
+      margin-top: 20px;
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .asistencia-table th, .asistencia-table td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+    .asistencia-table th {
+      background-color: #f2f2f2;
+    }
+    .asistio {
+      background-color: #c8e6c9;
+    }
+    .no-asistio {
+      background-color: #ffcdd2;
+    }
+  </style>
+<section class="main5">
+  <header>
+    <div class="center menu-container">
+      <div class="logo">
+        <h3>Administrador</h3>
+      </div>
+      <div class="menu">
+        <a class="active-menu" href="index.html">Inicio</a>
+        <a href="#" onclick="mostrarSeccion('registrar')">Registrar usuarios</a>
+        <a href="#" onclick="mostrarSeccion('informe')">Usuarios registrados</a>
+        <a href="#" onclick="mostrarSeccion('asistencia')">Registrar asistencia</a>
+        <a href="#" onclick="logout()">Cerrar sesión</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <center><h1>Panel Administrador</h1></center>
+
+    <!-- SECCIÓN REGISTRAR USUARIOS -->
+    <div id="registrar" class="seccion" style="display: none;">
+      <h2>Registrar Nuevo Usuario</h2>
+      <form id="formNuevoUsuario">
+        <input type="text" id="nuevoUsername" placeholder="Nombre de Usuario (sin espacios)" required pattern="^\S+$" title="No se permiten espacios">
+        <input type="password" id="nuevoPassword" placeholder="Contraseña (mínimo 8 caracteres)" required minlength="8">
+        <input type="text" id="nuevoNombre" placeholder="Nombre" required>
+        <input type="text" id="nuevoApellido" placeholder="Apellido" required>
+        <input type="date" id="nuevoNacimiento" placeholder="Fecha de Nacimiento" required>
+        <select id="nuevoRol" required>
+          <option value="">Seleccionar Rol</option>
+          <option value="Usuario">Usuario</option>
+          <option value="Entrenador">Entrenador</option>
+        </select>
+        <button type="submit">Registrar</button>
+      </form>
+      <p id="mensajeRegistro"></p>
+    </div>
+
+    <!-- SECCIÓN INFORME DE USUARIOS -->
+    <div id="informe" class="seccion" style="display: none;">
+      <h2>Usuarios Registrados</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Usuario</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Edad</th>
+            <th>Rol</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tablaUsuarios"></tbody>
+      </table>
+    </div>
+
+<!-- SECCIÓN REGISTRAR ASISTENCIA -->
+<div id="asistencia" class="seccion" style="display: none;">
+  <h2>Registrar Asistencia</h2>
+
+  <form id="formAsistencia">
+    <label for="usuarioAsistencia">Seleccionar Usuario:</label>
+    <select id="usuarioAsistencia" required></select>
+    <button type="submit">Registrar Asistencia</button>
+  </form>
+
+  <p id="mensajeAsistencia"></p>
+
+  <h3>Historial de Asistencias</h3>
+  <table id="tablaAsistencias" border="1" style="width:100%; text-align:center; border-collapse:collapse;">
+    <thead>
+      <tr>
+        <th>Usuario</th>
+        <th>Nombre</th>
+        <th>Apellido</th>
+        <th>Rol</th>
+        <th>Fechas de Asistencia</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Se llena dinámicamente -->
+    </tbody>
+  </table>
+</div>
+  </main>
+</section>
+
+<script>
+  //************ Elegir roll de la pagina **********************
+  const actual = JSON.parse(localStorage.getItem("usuarioActual"));
+  if (!actual || actual.rol !== "Administrador") {
+    window.location.href = "index.html";
+  }
+
+  function mostrarSeccion(id) {
+    const secciones = document.querySelectorAll('.seccion');
+    secciones.forEach(sec => sec.style.display = 'none');
+    const seccionMostrada = document.getElementById(id);
+    if (seccionMostrada) {
+      seccionMostrada.style.display = 'block';
+    }
+    if (id === 'asistencia') {
+      cargarUsuariosAsistencia();
+    }
+  }
+
+  function calcularEdad(fechaNacimiento) {
+    const hoy = new Date();
+    const nacimiento = new Date(fechaNacimiento);
+    let edad = hoy.getFullYear() - nacimiento.getFullYear();
+    const mes = hoy.getMonth() - nacimiento.getMonth();
+    if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
+      edad--;
+    }
+    return edad;
+  }
+
+  document.getElementById("formNuevoUsuario").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+
+    const username = document.getElementById("nuevoUsername").value.trim();
+    const password = document.getElementById("nuevoPassword").value.trim();
+    const nombre = document.getElementById("nuevoNombre").value.trim();
+    const apellido = document.getElementById("nuevoApellido").value.trim();
+    const nacimiento = document.getElementById("nuevoNacimiento").value;
+    const rol = document.getElementById("nuevoRol").value;
+
+    const mensaje = document.getElementById("mensajeRegistro");
+
+    if (usuarios.some(u => u.username === username)) {
+      mensaje.textContent = "❌ El nombre de usuario ya existe.";
+      mensaje.className = "error";
+      return;
+    }
+
+    const edad = calcularEdad(nacimiento);
+
+    const nuevoUsuario = {
+      username,
+      password,
+      nombre,
+      apellido,
+      edad,
+      nacimiento,
+      rol,
+      asistencias: []
+    };
+
+    usuarios.push(nuevoUsuario);
+    localStorage.setItem("usuarios", JSON.stringify(usuarios));
+
+    mensaje.textContent = "✅ Usuario registrado correctamente.";
+    mensaje.className = "success";
+    this.reset();
+    cargarUsuarios();
+  });
+
+  function cargarUsuarios() {
+    const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+    const tabla = document.getElementById("tablaUsuarios");
+    tabla.innerHTML = "";
+
+    usuarios.forEach(u => {
+      const puedeEliminar = u.username !== actual.username && u.rol !== "Gerente";
+      const fila = `
+        <tr>
+          <td>${u.username}</td>
+          <td>${u.nombre}</td>
+          <td>${u.apellido}</td>
+          <td>${u.edad}</td>
+          <td>${u.rol}</td>
+          <td>${puedeEliminar ? `<button onclick="eliminarUsuario('${u.username}')">Eliminar</button>` : "-"}</td>
+        </tr>`;
+      tabla.innerHTML += fila;
+    });
+  }
+
+  function eliminarUsuario(username) {
+    if (confirm("¿Deseas eliminar este usuario?")) {
+      let usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+      usuarios = usuarios.filter(u => u.username !== username);
+      localStorage.setItem("usuarios", JSON.stringify(usuarios));
+      cargarUsuarios();
+    }
+  }
+
+  function cargarUsuariosAsistencia() {
+    const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+    const select = document.getElementById("usuarioAsistencia");
+    select.innerHTML = '<option value="">Selecciona un usuario</option>';
+
+    usuarios.forEach(u => {
+      const option = document.createElement("option");
+      option.value = u.username;
+      option.textContent = `${u.nombre} ${u.apellido} (${u.rol})`;
+      select.appendChild(option);
+    });
+  }
+
+  document.getElementById("formAsistencia").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+    const usernameSeleccionado = document.getElementById("usuarioAsistencia").value;
+    const mensaje = document.getElementById("mensajeAsistencia");
+
+    if (!usernameSeleccionado) {
+      mensaje.textContent = "❌ Debes seleccionar un usuario.";
+      mensaje.className = "error";
+      return;
+    }
+
+    const usuario = usuarios.find(u => u.username === usernameSeleccionado);
+    const fechaHoy = new Date().toISOString().split("T")[0];
+
+  if (!usuario.asistencias.includes(fechaHoy)) {
+    usuario.asistencias.push(fechaHoy);
+    localStorage.setItem("usuarios", JSON.stringify(usuarios));
+    mensaje.textContent = `✅ Asistencia registrada para ${usuario.nombre} el ${fechaHoy}`;
+    mensaje.className = "success";
+  } else {
+    mensaje.textContent = `⚠️ Ya se registró asistencia hoy para ${usuario.nombre}`;
+    mensaje.className = "warning";
+  }
+
+  mostrarHistorialAsistencia(); // 👈 Refresca la tabla después de registrar
+});
+
+
+  function logout() {
+    localStorage.removeItem("usuarioActual");
+    window.location.href = "index.html";
+  }
+
+  cargarUsuarios();
+//**************** FUNCIONES PARA ASISTENCIA*********************
+
+// Formatear fecha a dd/mm/yyyy
+function formatearFecha(fecha) {
+  const f = new Date(fecha);
+  const dia = f.getDate().toString().padStart(2, '0');
+  const mes = (f.getMonth() + 1).toString().padStart(2, '0');
+  const anio = f.getFullYear();
+  return `${dia}/${mes}/${anio}`;
+}
+
+// Cargar usuarios en el <select>
+function cargarUsuariosAsistencia() {
+  const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+  const select = document.getElementById("usuarioAsistencia");
+  select.innerHTML = '<option value="">Seleccionar</option>';
+  usuarios.forEach(usuario => {
+    const option = document.createElement("option");
+    option.value = usuario.username;
+    option.textContent = `${usuario.nombre} ${usuario.apellido} (${usuario.rol})`;
+    select.appendChild(option);
+  });
+
+  // Mostrar historial cuando se selecciona un usuario
+  select.addEventListener("change", mostrarHistorialAsistencia);
+}
+
+// Mostrar historial de asistencia
+function mostrarHistorialAsistencia() {
+  const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+  const tabla = document.querySelector("#tablaAsistencias tbody");
+  const usernameSeleccionado = document.getElementById("usuarioAsistencia").value;
+  tabla.innerHTML = "";
+
+  const filtrados = usernameSeleccionado
+    ? usuarios.filter(u => u.username === usernameSeleccionado)
+    : usuarios;
+
+  filtrados.forEach(u => {
+    if (u.asistencias && u.asistencias.length > 0) {
+      const fechasFormateadas = u.asistencias.map(f => formatearFecha(f));
+      const fila = `
+        <tr>
+          <td>${u.username}</td>
+          <td>${u.nombre}</td>
+          <td>${u.apellido}</td>
+          <td>${u.rol}</td>
+          <td>${fechasFormateadas.join("<br>")}</td>
+        </tr>`;
+      tabla.innerHTML += fila;
+    }
+  });
+}
+
+// Registrar asistencia
+document.getElementById("formAsistencia").addEventListener("submit", function (e) {
+  e.preventDefault();
+  const username = document.getElementById("usuarioAsistencia").value;
+  if (!username) return;
+
+  const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+  const usuario = usuarios.find(u => u.username === username);
+  const hoy = new Date();
+  const fechaHoyFormateada = formatearFecha(hoy);
+
+  if (!usuario.asistencias) usuario.asistencias = [];
+  if (!usuario.asistencias.includes(hoy.toISOString())) {
+    usuario.asistencias.push(hoy.toISOString());
+    localStorage.setItem("usuarios", JSON.stringify(usuarios));
+    document.getElementById("mensajeAsistencia").textContent = "Asistencia registrada.";
+  } else {
+    document.getElementById("mensajeAsistencia").textContent = "La asistencia ya fue registrada hoy.";
+  }
+
+  mostrarHistorialAsistencia();
+});
+
+// Mostrar la sección y actualizar datos
+function mostrarSeccion(id) {
+  const secciones = document.querySelectorAll('.seccion');
+  secciones.forEach(sec => sec.style.display = 'none');
+  const seccionMostrada = document.getElementById(id);
+  if (seccionMostrada) {
+    seccionMostrada.style.display = 'block';
+  }
+  if (id === 'asistencia') {
+    cargarUsuariosAsistencia();
+    mostrarHistorialAsistencia();
+  }
+}
+</script>
+
+</body>
+</html>
